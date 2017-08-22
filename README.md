@@ -1,11 +1,11 @@
 # MySQL Partition Examples
 In MySQL, `parititon key` has to be a part of unique key. 
 
-### Range Partition (numeric ID)
+### Range Partition (Numeric ID)
 ``RANGE PARTITION`` is commonly used. Normally it is based on a numeric ``ID`` field.  
 
 ```
-CREATE TABLE `TABLE_NAME` (  
+CREATE TABLE test.`TABLE_NAME` (  
   `ID` INT(11) NOT NULL AUTO_INCREMENT,
   `value` VARCHAR(100) DEFAULT NULL,
   PRIMARY KEY (`ID`)
@@ -23,7 +23,7 @@ CREATE TABLE `TABLE_NAME` (
 Another example is to create monthly partition based on a `DATE` field.
 
 ```
-CREATE TABLE `MONTHLY_TABLE` (  
+CREATE TABLE test.`MONTHLY_TABLE` (  
   `ID` INT(10) NOT NULL AUTO_INCREMENT,
   `value` VARCHAR(100) DEFAULT NULL,
   `DATA_DATE` DATE NOT NULL,
@@ -84,7 +84,7 @@ done
 Create a Cyclic Partition for last 30 days data using List Partition. Sometimes, we only want to keep archive data for the last several days. It is necessary to create a cyclic partition for daily data. The example below shows how to create a cyclic partition table for last 30 days data using ``LIST PARTITION``. 
 
 ```
-CREATE TABLE `CYCLIC_TABLE` (  
+CREATE TABLE test.`CYCLIC_TABLE` (  
   `ID` INT(10) NOT NULL AUTO_INCREMENT,
   ...
   `DATA_DATE` DATE NOT NULL,
@@ -128,12 +128,10 @@ CREATE TABLE `CYCLIC_TABLE` (
 There is another partition - `HASH PARTITION`. When PARTITION BY HASH is used, MySQL determines which partition of num partitions to use based on the modulus of the result of the expression. In other words, for a given expression expr, the partition in which the record is stored is partition number N, where N = MOD(expr, num). Suppose table HASH_TABLE is defined as follows, it has 10 partitions based on the year of a ``DATE`` field. 
 
 ```
-CREATE TABLE `HASH_TABLE` (  
-  `ID` INT(10) NOT NULL,
-  ...
+CREATE TABLE test.`HASH_TABLE` (  
+  `ID` NOT NULL AUTO_INCREMENT,
   `DATA_DATE` DATE NOT NULL,
-  PRIMARY KEY (`DATA_DATE`,`ID`),
-  KEY idx_id (`ID`)
+  PRIMARY KEY (`ID`,`DATA_DATE`)
   ) PARTITION BY HASH(YEAR(DATA_DATE))
   PARTITIONS 10;
 ```
@@ -142,11 +140,10 @@ If we insert a record with ``DATA_DATE = '2010-01-10'``, the partition number = 
 For the Cyclic example in the last section, it can be redefined using HASH partition as below. 
 
 ```
-CREATE TABLE `CYCLIC_TABLE` (  
-  `ID` INT(10) NOT NULL,
-  ...
+CREATE TABLE test.`CYCLIC_TABLE2` (
+  `ID` INT(10) NOT NULL AUTO_INCREMENT,
   `DATA_DATE` DATE NOT NULL,
-  PRIMARY KEY (`DATA_DATE`,`ID`)
+  PRIMARY KEY (`ID`,`DATA_DATE`)
   ) PARTITION BY HASH(TO_DAYS(DATA_DATE))
   PARTITIONS 30;
 ```
